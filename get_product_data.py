@@ -16,7 +16,7 @@ def getProductData(shippings_products, prices_products, link,
 
     nova_janela.get(link)
 
-    sleep(5)
+    sleep(2)
 
     getPrices(nova_janela, shippings_products, prices_products)
     getQtdOrdersAndReviews(nova_janela, qtd_reviews, qtd_orders, star_rating)
@@ -66,20 +66,36 @@ def getReviewAndRating(nova_janela):
 
 
 def getQtdOrdersAndReviews(nova_janela, qtd_reviews, qtd_orders, star_rating):
-    getOne_qtd_reviews = nova_janela.find_element(
-        By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "black-link", " " ))]')
-    print(getOne_qtd_reviews.text)
-    qtd_reviews.append(getOne_qtd_reviews.text)
 
-    getOne_qtd_orders = nova_janela.find_element(
-        By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "product-reviewer-sold", " " ))]')
-    print(getOne_qtd_orders.text)
-    qtd_orders.append(getOne_qtd_orders.text)
+    getOne_qtd_reviews = "0"
+    try:
+        getOne_qtd_reviews = nova_janela.find_element(
+            By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "black-link", " " ))]')
+        print(getOne_qtd_reviews.text)
+        qtd_reviews.append(re.sub(r"[^0-9.]", "", getOne_qtd_reviews.text))
+    except:
+        print('quantidade de reviews nao encontrada')
+        qtd_reviews.append(getOne_qtd_reviews)
 
-    getOne_star_rating = nova_janela.find_element(
-        By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "overview-rating-average", " " ))]')
-    print(getOne_star_rating.text)
-    star_rating.append(getOne_star_rating.text)
+    getOne_qtd_orders = "0"
+    try:
+        getOne_qtd_orders = nova_janela.find_element(
+            By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "product-reviewer-sold", " " ))]')
+        print(getOne_qtd_orders.text)
+        qtd_orders.append(re.sub(r"[^0-9.]", "", getOne_qtd_orders.text))
+    except:
+        print('quantidade de orders nao encontrada')
+        qtd_orders.append(getOne_qtd_orders)
+
+    getOne_star_rating = "0"
+    try:
+        getOne_star_rating = nova_janela.find_element(
+            By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "overview-rating-average", " " ))]')
+        print(getOne_star_rating.text)
+        star_rating.append(getOne_star_rating.text)
+    except:
+        print('quantidade de stars nao encontrada')
+        star_rating.append(getOne_star_rating)
 
     print(qtd_reviews)
     print(qtd_orders)
@@ -88,10 +104,20 @@ def getQtdOrdersAndReviews(nova_janela, qtd_reviews, qtd_orders, star_rating):
 
 def getPrices(nova_janela, shippings_products, prices_products):
     # coleta o valor do frete
-    shipping_product = nova_janela.find_element(
-        By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "dynamic-shipping-titleLayout", " " ))]//strong')
-    print(shipping_product.text)
-    shippings_products.append(re.sub(r"[^0-9.]", "", shipping_product.text))
+
+    shipping_product = "0.0"
+
+    try:
+        shipping_product = nova_janela.find_element(
+            By.XPATH, '//*[contains(concat( " ", @class, " " ), concat( " ", "dynamic-shipping-titleLayout", " " ))]//strong')
+        print(shipping_product.text)
+        shippings_products.append(
+            re.sub(r"[^0-9.]", "", shipping_product.text))
+    except:
+        print('preço do frete não encontrado')
+        shippings_products.append(shipping_product)
+
+    price_product = "0.0"
 
     try:
         # coleta o valor do produto com preço em vermelho
@@ -104,6 +130,7 @@ def getPrices(nova_janela, shippings_products, prices_products):
 
     except NoSuchElementException:
         print("Preço vermelho nao encontrado")
+        prices_products.append(price_product)
 
     try:
         # coleta o valor do produto com prço em branco

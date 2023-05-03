@@ -5,9 +5,9 @@
         "price-shipping": "13.90",
         "total-shipping": "<valor-total-do-produto>",
         "store-rating": {
-            "product-quantity-reviews": "300",
-            "product-quantity-orders": "1000",
-            "product-star-rating": "4.7"
+            "quantity-reviews": "300",
+            "quantity-orders": "1000",
+            "star-rating": "4.7"
         },
         "product-reviews": {
             "product-review-1": {
